@@ -3,6 +3,7 @@ package com.example.katotakashi.myapplication;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,18 +17,22 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d("TAG", "onCreateが実行されました");
 
-        Button btn = (Button) findViewById(R.id.button1);
-        btn.setText("Hello");
-        mPlayer = MediaPlayer.create(this, R.raw.piano);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Button b = (Button) v;
-                b.setText("こんにちわ");
-                mPlayer.start();
-            }
-        });
+        MyView v = new MyView(this);
+        setContentView(v);
+
+//        Button btn = (Button) findViewById(R.id.button1);
+//        btn.setText("Hello");
+//        mPlayer = MediaPlayer.create(this, R.raw.piano);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View arg0) {
+//                Button b = (Button) arg0;
+//                b.setText("こんにちわ");
+//                mPlayer.start();
+//            }
+//        });
     }
 
 
