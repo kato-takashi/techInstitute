@@ -1,6 +1,7 @@
 package com.example.katotakashi.myapplication;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,21 +10,22 @@ import android.widget.Button;
 
 
 public class MainActivity extends Activity {
+    MediaPlayer mPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btn = new Button(this);
+        Button btn = (Button) findViewById(R.id.button1);
         btn.setText("Hello");
-        setContentView(btn);
-
+        mPlayer = MediaPlayer.create(this, R.raw.piano);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Button b = (Button) v;
                 b.setText("こんにちわ");
+                mPlayer.start();
             }
         });
     }
