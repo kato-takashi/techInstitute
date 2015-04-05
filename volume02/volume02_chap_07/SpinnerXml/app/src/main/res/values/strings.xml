@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SpinnerXml</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="fruits">
+        <item>りんご</item>
+        <item>みかん</item>
+        <item>梨</item>
+        <item>ドリアン</item>
+    </string-array>
+    <string name="spinnerSample">くだものの選択</string>
+</resources>
