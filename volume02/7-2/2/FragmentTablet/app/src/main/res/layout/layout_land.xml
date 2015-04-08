@@ -7,7 +7,7 @@
     android:orientation="horizontal">
     <fragment
         android:id="@+id/list1"
-        class="com.example.katotakashi.fragmenttablet.MylistFragment"
+        class="com.example.katotakashi.fragmenttablet.MyListFragment"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent"/>

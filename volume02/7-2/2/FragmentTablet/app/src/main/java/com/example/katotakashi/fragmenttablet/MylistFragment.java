@@ -12,10 +12,10 @@ import android.widget.Toast;
 /**
  * Created by KATOtakashi on 2015/04/07.
  */
-public class MylistFragment extends ListFragment{
+public class MyListFragment extends ListFragment{
     @Override
-    public void onActivityCreated(Bundle savedinstancesState){
-        super.onActivityCreated(savedinstancesState);
+    public void onActivityCreated(Bundle savedInstancesState){
+        super.onActivityCreated(savedInstancesState);
 
         String[] Data = {
           "りんご",
@@ -49,7 +49,7 @@ public class MylistFragment extends ListFragment{
 
         //R.id.detailがある場合
         if(hasDetail){
-            //ActivityのDragmentManagerからFragmentTransactionを取得
+            //ActivityのfragmentManagerからFragmentTransactionを取得
             FragmentManager fm = activity.getFragmentManager();
             FragmentTransaction t = fm.beginTransaction();
 
