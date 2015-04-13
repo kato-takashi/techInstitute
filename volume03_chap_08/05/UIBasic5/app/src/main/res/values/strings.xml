@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">XML基礎 - 色の管理</string>
+    <string name="animal">動物園にいる動物の種類</string>
+    <string name="animal_text">ライオン\nぞう\nシマウマ\n馬\nキリンなど</string>
+    <string name="pet">ペットとして飼える動物の種類</string>
+    <string name="pet_text">犬\n猫\nフェレット\n鳥\nトカゲ\nなど</string>
+    <string name="plant">草食動物の種類</string>
+    <string name="plant_text">馬\nシカ\nぞう\nうさぎ\nイグアナ\nなど</string>
+    <string name="meat">肉食動物の種類</string>
+    <string name="meat_text">ライオン\nアライグマ\nクマ\nピューマ\nミーアキャット\nなど</string>
+</resources>
