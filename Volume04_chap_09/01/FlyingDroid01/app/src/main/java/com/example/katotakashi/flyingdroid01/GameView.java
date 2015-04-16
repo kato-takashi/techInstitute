@@ -5,8 +5,10 @@ import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 
 /**
@@ -40,6 +42,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler) {
             this.surfaceHolder = surfaceHolder;
             droid = new Droid(context, droidSize, droidSize);
+            droid.setInitialPosition(100, 0);
         }
 
         @Override
@@ -51,9 +54,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
+        public void upliftDroid(boolean on) {
+            droid.uplift(on);
+        }
+
         public void draw(Canvas c) {
             c.drawARGB(255, 0, 0, 0);
-            droid.draw(c, 100, 100);
+            droid.draw(c);
         }
     }
 
@@ -75,6 +82,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 super.handleMessage(msg);
             }
         });
+
+        setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch (View v, MotionEvent event) {
+                dispatchEvent(event);
+                return dispatchEvent(event);
+            }
+        });
+    }
+
+    private boolean dispatchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                gameThread.upliftDroid(true);
+                return true;
+            case MotionEvent.ACTION_UP:
+                gameThread.upliftDroid(false);
+                return false;
+            default:
+                return false;
+        }
     }
 
     public GameView(Context context, AttributeSet attrs, int defStyle) {
