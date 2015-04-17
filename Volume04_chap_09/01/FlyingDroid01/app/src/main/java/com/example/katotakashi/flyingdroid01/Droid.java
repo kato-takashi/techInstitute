@@ -32,5 +32,10 @@ public class Droid extends AbstractGameObject{
     public void draw(Canvas c){
         draw(c, defaultX, y);
         y += velocity;
+        if(y < top){
+            y = top;
+        }else if(y > bottom){
+            y = bottom;
+        }
     }
 }

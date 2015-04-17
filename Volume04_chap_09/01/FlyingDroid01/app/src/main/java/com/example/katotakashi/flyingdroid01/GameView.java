@@ -24,7 +24,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+        gameThread.setViewSize(width, height);
     }
 
     @Override
@@ -35,6 +35,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     class GameThread extends Thread {
         SurfaceHolder surfaceHolder;
         boolean shouldContinue = true;
+        int width;
+        int height;
 
         Droid droid;
         static final int droidSize = 200;
@@ -53,7 +55,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 surfaceHolder.unlockCanvasAndPost(c);
             }
         }
+        public void setViewSize(int width, int height){
+            this.width = width;
+            this.height = height;
 
+            droid.setMovingBoundary(0, 0, width, height);
+        }
         public void upliftDroid(boolean on) {
             droid.uplift(on);
         }
