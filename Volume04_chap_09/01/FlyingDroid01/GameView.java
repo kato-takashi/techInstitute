@@ -40,11 +40,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         Droid droid;
         static final int droidSize = 200;
+        Enemy enemy;
+        static final int enemySize = 200;
 
         public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler) {
             this.surfaceHolder = surfaceHolder;
             droid = new Droid(context, droidSize, droidSize);
             droid.setInitialPosition(100, 0);
+            enemy = new Enemy(context, enemySize, enemySize);
+
         }
 
         @Override
@@ -60,6 +64,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             this.height = height;
 
             droid.setMovingBoundary(0, 0, width, height);
+            enemy.setMovingBoundary(0, 0, width, height);
         }
         public void upliftDroid(boolean on) {
             droid.uplift(on);
@@ -68,6 +73,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         public void draw(Canvas c) {
             c.drawARGB(255, 0, 0, 0);
             droid.draw(c);
+            enemy.draw(c);
         }
     }
 

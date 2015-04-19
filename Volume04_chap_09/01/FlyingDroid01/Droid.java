@@ -15,6 +15,13 @@ public class Droid extends AbstractGameObject{
     public Droid(Context context, int width, int height) {
         super(context, R.drawable.andou_diag01, width, height);
     }
+
+    @Override
+    public void setMovingBoundary(int left, int top, int right, int bottom) {
+        super.setMovingBoundary(left, top, right, bottom);
+        this.bottom -= height;
+    }
+
     public void uplift(boolean on){
         if(on){
             velocity = -DefaultVelocity;
@@ -22,6 +29,7 @@ public class Droid extends AbstractGameObject{
             velocity = DefaultVelocity;
         }
     }
+
     public void setInitialPosition(int x, int y){
         defaultX = x;
         defaultY = y;
