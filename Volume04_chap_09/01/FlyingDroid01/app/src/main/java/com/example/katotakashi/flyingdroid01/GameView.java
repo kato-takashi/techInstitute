@@ -71,6 +71,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         public void draw(Canvas c) {
+            if (enemy.isHit(droid)){
+                droid.setImageResourceId(R.drawable.andou_die01);
+            }
             c.drawARGB(255, 0, 0, 0);
             droid.draw(c);
             enemy.draw(c);
