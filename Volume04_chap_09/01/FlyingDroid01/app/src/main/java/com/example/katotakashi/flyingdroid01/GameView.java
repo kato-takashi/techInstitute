@@ -2,6 +2,8 @@ package com.example.katotakashi.flyingdroid01;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -50,6 +52,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         static final int enemySize = 200;
 
+        SoundPool sound;
+        int hitSoundId;
+        int rocketSoundId;
+        int rocketStreamId;
+
+
         public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler) {
             this.surfaceHolder = surfaceHolder;
             droid = new Droid(context, droidSize, droidSize);
@@ -58,7 +66,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             this.context = context;
             enemys = new Enemy[EnemyNum];
             enemys[0] = new Enemy(context, enemySize, enemySize);
+            setupSoundPool();
+        }
 
+        public void setupSoundPool(){
+            sound = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+            hitSoundId = sound.load(context, R.raw.quick_explosion, 1);
+            rocketStreamId = sound.load(context, R.raw.rockets, 1);
+        }
+
+        public void releaseSoundPool(){
+            sound.release();
         }
 
         @Override
@@ -83,13 +101,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         public void upliftDroid(boolean on) {
+
             droid.uplift(on);
+            if(on){
+                rocketStreamId = sound.play(rocketSoundId, 0.5f, 0.5f, 0, -1, 1.0f);
+            }else{
+                sound.stop(rocketStreamId);
+            }
         }
 
         public void draw(Canvas c) {
             for (int i = 0; i < EnemyNum; i++) {
                 if (enemys[i] != null && enemys[i].isHit(droid)) {
                     droid.setImageResourceId(R.drawable.andou_die01);
+                    sound.play(hitSoundId, 1.0f, 1.0f, 0, 0, 1.0f);
                 }
             }
             c.drawARGB(255, 0, 0, 0);

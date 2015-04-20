@@ -22,6 +22,8 @@ public abstract class AbstractGameObject {
     protected double radius;
     protected Context context;
 
+    protected boolean alreadyHit = false;
+
     public AbstractGameObject(Context context, int resourceId, int width, int height) {
         this.context = context;
         drawableImg = context.getResources().getDrawable(resourceId);
@@ -51,7 +53,8 @@ public abstract class AbstractGameObject {
         double ylen = (y + radius) - (obj.y + obj.radius);
         double len = Math.sqrt((xlen * xlen) + (ylen * ylen));
         double radiusSum = radius + obj.radius;
-        if (len <= radiusSum) {
+        if (len <= radiusSum && !alreadyHit) {
+            alreadyHit = true;
             return true;
         } else {
             return false;

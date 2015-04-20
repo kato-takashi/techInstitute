@@ -35,6 +35,7 @@ public class Enemy extends AbstractGameObject{
         if(x < left){
             x = right;
             y = getY();
+            alreadyHit = false;
         }
     }
 }
