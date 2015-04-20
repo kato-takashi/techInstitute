@@ -40,14 +40,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         Droid droid;
         static final int droidSize = 200;
+
         Enemy enemy;
+        long frameNo = 0;
+        long nextGenFrame = 100;
+        Context context;
+        static final int EnemyNum = 5;
+        Enemy[] enemys;
+
         static final int enemySize = 200;
 
         public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler) {
             this.surfaceHolder = surfaceHolder;
             droid = new Droid(context, droidSize, droidSize);
             droid.setInitialPosition(100, 0);
-            enemy = new Enemy(context, enemySize, enemySize);
+
+            this.context = context;
+            enemys = new Enemy[EnemyNum];
+            enemys[0] = new Enemy(context, enemySize, enemySize);
 
         }
 
@@ -59,24 +69,48 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 surfaceHolder.unlockCanvasAndPost(c);
             }
         }
-        public void setViewSize(int width, int height){
+
+        public void setViewSize(int width, int height) {
             this.width = width;
             this.height = height;
 
             droid.setMovingBoundary(0, 0, width, height);
-            enemy.setMovingBoundary(0, 0, width, height);
+            for (int i = 0; i < EnemyNum; i++) {
+                if (enemys[i] != null) {
+                    enemys[i].setMovingBoundary(0, 0, width, height);
+                }
+            }
         }
+
         public void upliftDroid(boolean on) {
             droid.uplift(on);
         }
 
         public void draw(Canvas c) {
-            if (enemy.isHit(droid)){
-                droid.setImageResourceId(R.drawable.andou_die01);
+            for (int i = 0; i < EnemyNum; i++) {
+                if (enemys[i] != null && enemys[i].isHit(droid)) {
+                    droid.setImageResourceId(R.drawable.andou_die01);
+                }
             }
             c.drawARGB(255, 0, 0, 0);
             droid.draw(c);
-            enemy.draw(c);
+
+            for (int i = 0; i < EnemyNum; i++) {
+                if (enemys[i] != null) {
+                    enemys[i].draw(c);
+                }
+            }
+            if (frameNo == nextGenFrame) {
+                for (int i = 0; i < EnemyNum; i++) {
+                    if (enemys[i] == null) {
+                        enemys[i] = new Enemy(context, enemySize, enemySize);
+                        enemys[i].setMovingBoundary(0, 0, width, height);
+                        nextGenFrame += 100;
+                        break;
+                    }
+                }
+            }
+            frameNo++;
         }
     }
 
@@ -99,9 +133,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         });
 
-        setOnTouchListener(new View.OnTouchListener(){
+        setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch (View v, MotionEvent event) {
+            public boolean onTouch(View v, MotionEvent event) {
                 dispatchEvent(event);
                 return dispatchEvent(event);
             }
