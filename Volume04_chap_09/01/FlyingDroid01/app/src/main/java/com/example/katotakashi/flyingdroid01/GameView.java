@@ -2,6 +2,8 @@ package com.example.katotakashi.flyingdroid01;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
@@ -57,6 +59,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         int rocketSoundId;
         int rocketStreamId;
 
+        long resumeFrame = -1;
+
 
         public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler) {
             this.surfaceHolder = surfaceHolder;
@@ -69,13 +73,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             setupSoundPool();
         }
 
-        public void setupSoundPool(){
+        public void setupSoundPool() {
             sound = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
             hitSoundId = sound.load(context, R.raw.quick_explosion, 1);
             rocketStreamId = sound.load(context, R.raw.rockets, 1);
         }
 
-        public void releaseSoundPool(){
+        public void releaseSoundPool() {
             sound.release();
         }
 
@@ -83,9 +87,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         public void run() {
             while (shouldContinue) {
                 Canvas c = surfaceHolder.lockCanvas();
-                draw(c);
-                surfaceHolder.unlockCanvasAndPost(c);
+                if (c != null) {
+                    draw(c);
+                    surfaceHolder.unlockCanvasAndPost(c);
+                }
             }
+        }
+
+        private void drawHitPoint(Canvas c, int point) {
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(80);
+            c.drawText("HP: " + point, 20, 100, paint);
         }
 
         public void setViewSize(int width, int height) {
@@ -103,17 +116,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         public void upliftDroid(boolean on) {
 
             droid.uplift(on);
-            if(on){
+            if (on) {
                 rocketStreamId = sound.play(rocketSoundId, 0.5f, 0.5f, 0, -1, 1.0f);
-            }else{
+            } else {
                 sound.stop(rocketStreamId);
             }
         }
 
         public void draw(Canvas c) {
+            int hitPoint = droid.getHitPoint();
+
             for (int i = 0; i < EnemyNum; i++) {
                 if (enemys[i] != null && enemys[i].isHit(droid)) {
                     droid.setImageResourceId(R.drawable.andou_die01);
+                    droid.hit();
+                    hitPoint = droid.getHitPoint();
+                    if (hitPoint == 0) {
+                        resumeFrame = frameNo + 300;
+                    }
                     sound.play(hitSoundId, 1.0f, 1.0f, 0, 0, 1.0f);
                 }
             }
@@ -125,6 +145,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     enemys[i].draw(c);
                 }
             }
+
+            drawHitPoint(c, hitPoint);
+            if (frameNo == resumeFrame) {
+                droid.resume();
+            }
+
             if (frameNo == nextGenFrame) {
                 for (int i = 0; i < EnemyNum; i++) {
                     if (enemys[i] == null) {
