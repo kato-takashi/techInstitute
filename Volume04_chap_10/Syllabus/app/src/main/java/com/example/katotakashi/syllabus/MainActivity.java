@@ -2,12 +2,14 @@ package com.example.katotakashi.syllabus;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
+
     private class CourseItem {
         String date;
         String title;
@@ -50,10 +53,12 @@ public class MainActivity extends Activity {
 
         itemList = new ArrayList<CourseItem>();
         adapter = new ItemAdapter(getApplicationContext(), 0, itemList);
-        ListView listVIew = (ListView)findViewById(R.id.listview);
-        listVIew.setAdapter(adapter);
+        ListView listView = (ListView)findViewById(R.id.listview);
+        listView.setAdapter(adapter);
 
         setCourseData();
+
+        listView.setOnItemClickListener(this);
     }
 
     private class ItemAdapter extends ArrayAdapter<CourseItem> {
@@ -98,5 +103,16 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        CourseItem item = (CourseItem)parent.getItemAtPosition(position);
+        Intent intent = new Intent(this, CourseDetail.class);
+        intent.putExtra("date", item.date);
+        intent.putExtra("title", item.title);
+        intent.putExtra("teacher", item.teacher);
+        intent.putExtra("detail", item.detail);
+        startActivity(intent);
     }
 }
