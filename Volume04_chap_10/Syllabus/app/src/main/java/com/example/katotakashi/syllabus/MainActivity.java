@@ -14,6 +14,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+
+import org.json.JSONObject;
+
+import java.net.ResponseCache;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +28,7 @@ import java.util.List;
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private class CourseItem {
-        String date;
+        Date date;
         String title;
         String teacher;
         String detail;
@@ -29,7 +36,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     private List<CourseItem> itemList;
     private ItemAdapter adapter;
+    private RequestQueue reqQueue;
+    private static final String syllabusUrl = "https://dl.dropboxusercontent.com/u/1088314/tech_institute/2014/syllabus.json";
 
+
+    private void getCourseDate(){
+        Response.Listener<JSONObject> = new Response.Listener<JSONObject>(){
+            
+        }
+    }
     private void setCourseData() {
         CourseItem item = new CourseItem();
         item.date = "8/28";
