@@ -51,6 +51,23 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private static final String syllabusUrl = "https://dl.dropboxusercontent.com/u/1088314/tech_institute/2014/syllabus.json";
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        itemList = new ArrayList<CourseItem>();
+        adapter = new ItemAdapter(getApplicationContext(), 0, itemList);
+        ListView listView = (ListView) findViewById(R.id.listview);
+        listView.setAdapter(adapter);
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar1);
+
+        reqQueue = Volley.newRequestQueue(this);
+        getCourseDate();
+        listView.setOnItemClickListener(this);
+    }
+
     private void getCourseDate() {
         progressBar.setVisibility(View.VISIBLE);
         Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
@@ -77,6 +94,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         reqQueue.add(jsonReq);
     }
 
+
     private void setCourseArray(JSONArray array) throws JSONException {
         int num = array.length();
         SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -98,24 +116,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 e.printStackTrace();
             }
         }
-    }
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        itemList = new ArrayList<CourseItem>();
-        adapter = new ItemAdapter(getApplicationContext(), 0, itemList);
-        ListView listView = (ListView) findViewById(R.id.listview);
-        listView.setAdapter(adapter);
-
-        progressBar = (ProgressBar) findViewById(R.id.progressBar1);
-
-        reqQueue = Volley.newRequestQueue(this);
-        getCourseDate();
-        listView.setOnItemClickListener(this);
+        adapter.notifyDataSetChanged();
     }
 
     private class ItemAdapter extends ArrayAdapter<CourseItem> {
@@ -127,7 +128,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
-        private class ViewHolder{
+        private class ViewHolder {
             TextView date;
             TextView title;
         }
@@ -136,14 +137,14 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = inflater.inflate(R.layout.lecture_row, null, false);
                 holder = new ViewHolder();
-                holder.date = (TextView)convertView.findViewById(R.id.date);
-                holder.title = (TextView)convertView.findViewById(R.id.title);
+                holder.date = (TextView) convertView.findViewById(R.id.date);
+                holder.title = (TextView) convertView.findViewById(R.id.title);
                 convertView.setTag(holder);
-            }else{
-                holder = (ViewHolder)convertView.getTag();
+            } else {
+                holder = (ViewHolder) convertView.getTag();
             }
             CourseItem item = getItem(position);
             holder.date.setText(dateFormat.format(item.date));
@@ -180,11 +181,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         CourseItem item = (CourseItem) parent.getItemAtPosition(position);
         Intent intent = new Intent(this, CourseDetail.class);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        intent.putExtra("date", dateFormat.format(item.date));
         intent.putExtra("title", item.title);
-        intent.putExtra("teacher", item.teacher);
-        intent.putExtra("detail", item.detail);
         startActivity(intent);
     }
 }
