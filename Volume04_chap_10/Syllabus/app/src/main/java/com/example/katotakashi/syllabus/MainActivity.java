@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,17 +13,26 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.ResponseCache;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarException;
 
 
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
@@ -36,30 +46,60 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     private List<CourseItem> itemList;
     private ItemAdapter adapter;
+    private ProgressBar progressBar;
     private RequestQueue reqQueue;
     private static final String syllabusUrl = "https://dl.dropboxusercontent.com/u/1088314/tech_institute/2014/syllabus.json";
 
 
-    private void getCourseDate(){
-        Response.Listener<JSONObject> = new Response.Listener<JSONObject>(){
-            
+    private void getCourseDate() {
+        progressBar.setVisibility(View.VISIBLE);
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray array = response.getJSONArray("course");
+                    setCourseArray(array);
+                    progressBar.setVisibility(View.INVISIBLE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("onResponse", "error=" + error);
+            }
+        };
+
+        JsonObjectRequest jsonReq = new JsonObjectRequest(syllabusUrl, null, listener, errorListener);
+        reqQueue.add(jsonReq);
+    }
+
+    private void setCourseArray(JSONArray array) throws JSONException {
+        int num = array.length();
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = 0; i < num; i++) {
+            CourseItem item = new CourseItem();
+            JSONObject obj = array.getJSONObject(i);
+            String dateStr = obj.getString("date");
+            Date date = null;
+
+            try {
+                date = inputDateFormat.parse(dateStr);
+                item.date = date;
+                item.title = obj.getString("title");
+                item.teacher = obj.getString("teacher");
+                item.detail = obj.getString("detail");
+                itemList.add(item);
+                Log.d("item", item.teacher);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
-    private void setCourseData() {
-        CourseItem item = new CourseItem();
-        item.date = "8/28";
-        item.title = "ユーティリティによる実践(1)";
-        item.teacher = "高橋憲一";
-        item.detail = "この講義では一つのアプリとして仕上げることを目指します。";
-        itemList.add(item);
 
-        item = new CourseItem();
-        item.date = "9/2";
-        item.title = "ユーティリティによる実践(2)";
-        item.teacher = "高橋憲一";
-        item.detail = "一つのアプリを仕上げることを目指す2回目。";
-        itemList.add(item);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,33 +108,49 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         itemList = new ArrayList<CourseItem>();
         adapter = new ItemAdapter(getApplicationContext(), 0, itemList);
-        ListView listView = (ListView)findViewById(R.id.listview);
+        ListView listView = (ListView) findViewById(R.id.listview);
         listView.setAdapter(adapter);
 
-        setCourseData();
+        progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 
+        reqQueue = Volley.newRequestQueue(this);
+        getCourseDate();
         listView.setOnItemClickListener(this);
     }
 
     private class ItemAdapter extends ArrayAdapter<CourseItem> {
         private LayoutInflater inflater;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd");
 
         public ItemAdapter(Context context, int resource, List<CourseItem> objects) {
             super(context, resource, objects);
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
+        private class ViewHolder{
+            TextView date;
+            TextView title;
+        }
+
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = inflater.inflate(R.layout.lecture_row, null, false);
-            TextView dateView = (TextView) view.findViewById(R.id.date);
-            TextView titleView = (TextView) view.findViewById(R.id.title);
+            ViewHolder holder;
+            if(convertView == null){
+                convertView = inflater.inflate(R.layout.lecture_row, null, false);
+                holder = new ViewHolder();
+                holder.date = (TextView)convertView.findViewById(R.id.date);
+                holder.title = (TextView)convertView.findViewById(R.id.title);
+                convertView.setTag(holder);
+            }else{
+                holder = (ViewHolder)convertView.getTag();
+            }
             CourseItem item = getItem(position);
-            dateView.setText(item.date);
-            titleView.setText(item.title);
-            return view;
+            holder.date.setText(dateFormat.format(item.date));
+            holder.title.setText(item.title);
+            return convertView;
         }
+
     }
 
 
@@ -122,9 +178,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        CourseItem item = (CourseItem)parent.getItemAtPosition(position);
+        CourseItem item = (CourseItem) parent.getItemAtPosition(position);
         Intent intent = new Intent(this, CourseDetail.class);
-        intent.putExtra("date", item.date);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        intent.putExtra("date", dateFormat.format(item.date));
         intent.putExtra("title", item.title);
         intent.putExtra("teacher", item.teacher);
         intent.putExtra("detail", item.detail);
