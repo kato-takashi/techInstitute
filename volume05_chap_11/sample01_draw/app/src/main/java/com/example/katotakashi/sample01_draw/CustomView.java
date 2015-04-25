@@ -11,10 +11,14 @@ import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import java.util.zip.Inflater;
 
 
 /**
@@ -22,7 +26,17 @@ import android.widget.Toast;
  */
 public class CustomView extends View{
 
-//    コンストラクタ
+    //    描画用のビットマップ、キャンバス、パス、ペイントの設定
+    private Bitmap mBitmap;
+    private Canvas mCanvas;
+    private Path mPath;
+    private Paint mPaint;
+    private LinearLayout ll;
+    private Button delBtn;
+
+
+
+    //    コンストラクタ
     public CustomView(Context context) {
         super(context);
 //        何もしません
@@ -34,23 +48,25 @@ public class CustomView extends View{
         //        何もしません
     }
 
-//    XMLより呼び出す際のコンストラクタ
-    public CustomView(Context context, AttributeSet attrs) {
+    //    XMLより呼び出す際のコンストラクタ
+    public CustomView(final Context context, AttributeSet attrs) {
+
+
         super(context, attrs);
+        /** カスタムビューのxmlからのlayoutの情報を読み込む. */
+        // inflateでtest.xmlを取得
+//        LayoutInflater inflater = LayoutInflater.from(context);
+//        View ll = (View) inflater.inflate(R.layout.sample_custom_view, null);
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ll = (LinearLayout) inflater.inflate(R.layout.sample_custom_view,
+                null);
         setFocusable(true);
         initPaint();
     }
 
-//    描画用のビットマップ、キャンバス、パス、ペイントの設定
-    private Bitmap mBitmap;
-    private Canvas mCanvas;
-    private Path mPath;
-    private Paint mPaint;
 
-    private Button delBtn;
-
-//    描画用のPaintの初期化
-    private void initPaint(){
+    //    描画用のPaintの初期化
+    private void initPaint() {
         mPath = new Path();
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -61,10 +77,19 @@ public class CustomView extends View{
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(12);
 
-        delBtn = (Button)findViewById(R.id.deleteBtn);
-//        delBtn.setOnClickListener(delBtnClickListener);
+        delBtn = (Button) ll.findViewById(R.id.delBtn1);
+//        delBtn.setOnClickListener(new OnClickListener() {
+//            public void onClick(View v) {
+//                showToast();
+//            }
+//        });
     }
-//    マウスイベント
+
+    private void showToast() {
+        Toast.makeText(this.getContext(), "Application", Toast.LENGTH_SHORT).show();
+    }
+
+    //    マウスイベント
     private float mX, mY;
     private static final float TOUCH_TOLERANCE = 4;
 
@@ -72,7 +97,7 @@ public class CustomView extends View{
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 //        画面サイズ変更時に通知
-        Log.v("View", "onSizeChanged Width: "+ w + ", Height: " + h);
+        Log.v("View", "onSizeChanged Width: " + w + ", Height: " + h);
 //        Canvasを作成
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
@@ -90,7 +115,7 @@ public class CustomView extends View{
         float x = event.getX();
         float y = event.getY();
 
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 touch_start(x, y);
                 break;
@@ -105,7 +130,7 @@ public class CustomView extends View{
         return true;
     }
 
-    private void touch_start(float x, float y){
+    private void touch_start(float x, float y) {
 //        タッチ開始
         Log.v("View", "touch_start");
         mPath.reset();
@@ -115,20 +140,20 @@ public class CustomView extends View{
     }
 
 
-    private void touch_move(float x, float y){
+    private void touch_move(float x, float y) {
 //        指が移動している間の処理
         Log.d("View", "touch_move");
         float dx = Math.abs(x - mX);
-        float dy = Math.abs(y -mY);
+        float dy = Math.abs(y - mY);
 //        しきい値より移動量が多ければ線をつなぐ
-        if(dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE){
-            mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
             mX = x;
             mY = y;
         }
     }
 
-    private void touch_up(){
+    private void touch_up() {
 //        タッチ終了
         Log.v("View", "touch_up");
 //        線を描く
