@@ -33,7 +33,7 @@ public class CustomView extends View{
     private Paint mPaint;
     private LinearLayout ll;
     private Button delBtn;
-
+    private Context myContext;
 
 
     //    コンストラクタ
@@ -50,18 +50,11 @@ public class CustomView extends View{
 
     //    XMLより呼び出す際のコンストラクタ
     public CustomView(final Context context, AttributeSet attrs) {
-
-
         super(context, attrs);
-        /** カスタムビューのxmlからのlayoutの情報を読み込む. */
-        // inflateでtest.xmlを取得
-//        LayoutInflater inflater = LayoutInflater.from(context);
-//        View ll = (View) inflater.inflate(R.layout.sample_custom_view, null);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ll = (LinearLayout) inflater.inflate(R.layout.sample_custom_view,
-                null);
+        myContext = context;
         setFocusable(true);
         initPaint();
+        setDelBtn(context);
     }
 
 
@@ -72,19 +65,25 @@ public class CustomView extends View{
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
         mPaint.setColor(Color.RED);
+        mPaint.setAlpha(128);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(12);
-
-        delBtn = (Button) ll.findViewById(R.id.delBtn1);
-//        delBtn.setOnClickListener(new OnClickListener() {
-//            public void onClick(View v) {
-//                showToast();
-//            }
-//        });
     }
+    /** カスタムビューのxmlからのlayoutの情報を読み込む. */
+    private void setDelBtn(Context context){
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.sample_custom_view, null);
+        delBtn = (Button) ll.findViewById(R.id.delBtn1);
+        delBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showToast();
+            }
+        });
 
+
+    }
     private void showToast() {
         Toast.makeText(this.getContext(), "Application", Toast.LENGTH_SHORT).show();
     }
@@ -161,13 +160,5 @@ public class CustomView extends View{
         mCanvas.drawPath(mPath, mPaint);
         mPath.reset();
     }
-
-    OnClickListener delBtnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.v("click", "del");
-
-        }
-    };
 
 }

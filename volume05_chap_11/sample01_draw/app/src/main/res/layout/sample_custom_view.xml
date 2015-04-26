@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".CustomView">
 
-    <com.example.katotakashi.sample01_draw.CustomView
-        android:background="#ccc"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:paddingLeft="20dp"
-        android:paddingBottom="40dp"
-        />
+
 
     <Button
         android:id="@+id/delBtn1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:text="@string/deleteBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
 
 </LinearLayout>
 
