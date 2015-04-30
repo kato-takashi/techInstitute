@@ -12,5 +12,9 @@
         android:id="@+id/paintView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+    <com.example.katotakashi.sample01_draw.sample_custom_view
+        android:id="@+id/custom_view_xml"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+        />
 </RelativeLayout>

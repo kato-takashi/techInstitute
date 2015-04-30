@@ -7,7 +7,6 @@
     tools:context=".CustomView">
 
 
-
     <Button
         android:id="@+id/delBtn1"
         android:text="@string/deleteBtn"
