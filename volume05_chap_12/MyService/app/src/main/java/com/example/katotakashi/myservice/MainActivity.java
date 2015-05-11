@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
                     startService(new Intent(MainActivity.this, MyService.class));
                     break;
                 case R.id.stopBtn:
-                    startService(new Intent(MainActivity.this, MyService.class));
+                    stopService(new Intent(MainActivity.this, MyService.class));
                     break;
             }
 
