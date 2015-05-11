@@ -58,11 +58,15 @@ public class MainActivity extends Activity implements Runnable {
             if (now - time > 1000) {
                 Message msg = mHandler.obtainMessage();
                 msg.obj = new String("ループが" + count + "回終了しました");
-//                mHandler.post(new Runnable(){
-//
-//                })
+                final String text = new String("ループが" + count + "回終了しました");
+                mHandler.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        mTextView.setText(text);
+                    }
+                });
 //                ハンドラへメッセージの送信
-                mHandler.sendMessage(msg);
+//                mHandler.sendMessage(msg);
 //                スレッド乗りよう変数を初期化
                 time = now;
                 count++;
